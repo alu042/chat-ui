@@ -28,6 +28,8 @@ export interface Assistant extends Timestamps {
 	dynamicPrompt?: boolean;
 	searchTokens: string[];
 	last24HoursCount: number;
+	apiKey?: string;
+	apiUrl?: string;
 }
 
 // eslint-disable-next-line no-shadow

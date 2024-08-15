@@ -7,6 +7,7 @@ import {
 	assistantHasWebSearch,
 	getAssistantById,
 	processPreprompt,
+	getAssistantResponse,
 } from "./assistant";
 import { filterToolsOnPreferences, runTools } from "./tools";
 import type { WebSearch } from "$lib/types/WebSearch";
@@ -81,6 +82,12 @@ async function* textGenerationWithoutTitle(
 		const tools = await filterToolsOnPreferences(toolsPreference, Boolean(assistant));
 		const toolCallsRequired = tools.some((tool) => !toolHasName("directly_answer", tool));
 		if (toolCallsRequired) toolResults = yield* runTools(ctx, tools, preprompt);
+	}
+
+	if (assistant?.apiKey && assistant?.apiUrl) {
+		yield* getAssistantResponse(assistant.apiKey, assistant.apiUrl, messages);
+		done.abort();
+		return;
 	}
 
 	const processedMessages = await preprocessMessages(messages, webSearchResult, convId);

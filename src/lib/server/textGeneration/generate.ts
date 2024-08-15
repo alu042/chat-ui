@@ -3,6 +3,7 @@ import { MessageUpdateType, type MessageUpdate } from "$lib/types/MessageUpdate"
 import { AbortedGenerations } from "../abortedGenerations";
 import type { TextGenerationContext } from "./types";
 import type { EndpointMessage } from "../endpoints/endpoints";
+import { getAssistantResponse } from "./assistant"; // Import the new function
 
 type GenerateContext = Omit<TextGenerationContext, "messages"> & { messages: EndpointMessage[] };
 
@@ -11,6 +12,12 @@ export async function* generate(
 	toolResults: ToolResult[],
 	preprompt?: string
 ): AsyncIterable<MessageUpdate> {
+	if (assistant?.apiKey && assistant?.apiUrl) {
+		// Call the new getAssistantResponse function if the assistant has an apiKey and apiUrl
+		yield* getAssistantResponse(assistant.apiKey, assistant.apiUrl, messages);
+		return;
+	}
+
 	for await (const output of await endpoint({
 		messages,
 		preprompt,

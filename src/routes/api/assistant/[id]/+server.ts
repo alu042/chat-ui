@@ -10,7 +10,12 @@ export async function GET({ params }) {
 	});
 
 	if (assistant) {
-		return Response.json(assistant);
+		const response = {
+			...assistant,
+			apiKey: assistant.apiKey ?? undefined,
+			apiUrl: assistant.apiUrl ?? undefined,
+		};
+		return Response.json(response);
 	} else {
 		return Response.json({ message: "Assistant not found" }, { status: 404 });
 	}
